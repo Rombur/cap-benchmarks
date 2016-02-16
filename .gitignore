@@ -1,0 +1,8 @@
+*.un~
+CMakeFiles
+CMakeCache.txt
+Makefile
+*sanitizer*
+*.swp
+email.txt
+cmake_install.cmake
