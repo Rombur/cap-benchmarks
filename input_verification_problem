@@ -139,7 +139,7 @@
 
     <charge_current>        5.0e-3 </charge_current>        <!-- ampere -->
     <charge_time>           2.0    </charge_time>           <!-- second -->
-    <time_step>             0.01   </time_step>             <!-- second -->
+    <time_step>             0.001  </time_step>             <!-- second -->
 
     <percent_tolerance>     0.1    </percent_tolerance>
 </verification_problem_subramanian>
@@ -150,7 +150,7 @@
     <initial_voltage>       2.5    </initial_voltage>       <!-- volt -->
     <discharge_current>     5.0e-3 </discharge_current>     <!-- ampere -->
     <discharge_time>        2.0    </discharge_time>        <!-- second -->
-    <time_step>             0.01   </time_step>             <!-- second -->
+    <time_step>             0.001  </time_step>             <!-- second -->
 
     <percent_tolerance>     0.1    </percent_tolerance>
 

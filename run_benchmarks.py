@@ -9,6 +9,11 @@ import os
 import subprocess
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+import time
+import matplotlib.pylab as plt
+import numpy as np
 
 #benchmarks_file = open('/scratch/source/cap-benchmarks/benchmarks_test.txt','a')
 #print(benchmarks_file)
@@ -76,14 +81,49 @@ diff_2 = subprocess.Popen(["diff", "undefined_sanititzer.txt",
     "leak_sanitizer.txt"], stdout=subprocess.PIPE, 
     stderr=subprocess.PIPE).communicate()[0]
 
+# Run benchmark
+os.chdir("/home/bt2/Documents/Cap/build_release")
+subprocess.call(["./do_configure", "-DCMAKE_CXX_FLAGS=-O3"])
+subprocess.call(["make", "clean"])
+subprocess.call(["make", "-j4", "install"])
+os.chdir("/home/bt2/Documents/cap-benchmarks")
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-O3", "."])
+subprocess.call(["make", "clean"])
+subprocess.call(["make"])
+start_time = time.time()
+subprocess.call(["./test_exact_transient_solution-2"])
+end_time = time.time()
+subprocess.call(["make","clean"])
+benchmark_file = open('benchmark_1.txt', 'a')
+delta_t = end_time-start_time
+benchmark_file.write(str(delta_t)+'\n')
+benchmark_file.close()
+benchmark_file = open('benchmark_1.txt', 'r')
+data = benchmark_file.read()
+data_list = data.split()
+data_array = np.array(data_list)
+plt.plot(data_array)
+plt.ylabel('Time in seconds')
+plt.xlabel('Run')
+plt.title('Benchmark')
+plt.savefig('benchmark.png')
+
+
 # Send email
+msg = MIMEMultipart()
 email_file = open('email.txt', 'w')
+email_file.write('The sanitizers found the following error:')
 email_file.write(diff_1)
 email_file.write(diff_2)
 email_file.close()
 email_file = open('email.txt', 'r')
-msg = MIMEText(email_file.read())
+msg.attach(MIMEText(email_file.read()))
 email_file.close()
+
+fp = open('benchmark.png', 'rb')
+img = MIMEImage(fp.read());
+fp.close()
+msg.attach(img)
 
 msg['Subject'] = 'Cap: sanitizers and benchmarks'
 msg['From'] = 'turcksinbr@ornl.gov'

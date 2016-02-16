@@ -226,10 +226,6 @@ void verification_problem(std::shared_ptr<cap::EnergyStorageDevice> dev, std::sh
     dimensionless_cell_current_density *= discharge_current / cross_sectional_area;
     dimensionless_cell_current_density /= 0.5 * initial_voltage;
 
-    std::cout<<"I^*   = "<<dimensionless_cell_current_density<<"\n";
-    std::cout<<"gamma = "<<ratio_of_solution_phase_to_matrix_phase_conductivities<<"\n";
-    std::cout<<"beta  = "<<ratio_of_separator_to_electrode_resistances<<"\n";
-
     dev->reset_voltage(initial_voltage);
     double computed_voltage;
     double exact_voltage;

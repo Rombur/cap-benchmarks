@@ -6,3 +6,5 @@ Makefile
 *.swp
 email.txt
 cmake_install.cmake
+*.png
+benchmark_1.txt
