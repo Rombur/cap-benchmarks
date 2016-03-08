@@ -32,6 +32,15 @@ sanitizer_file = open('undefined_sanitizer.txt', 'w')
 output = subprocess.Popen(["./test_exact_transient_solution-2"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+output = subprocess.Popen(["./charge_curve"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./cyclic_voltammetry"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./discharge_curve"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
 sanitizer_file.close()
 subprocess.call(["make","clean"])
 
@@ -49,6 +58,15 @@ sanitizer_file = open('address_sanitizer.txt', 'w')
 output = subprocess.Popen(["./test_exact_transient_solution-2"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+output = subprocess.Popen(["./charge_curve"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./cyclic_voltammetry"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./discharge_curve"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
 sanitizer_file.close()
 subprocess.call(["make","clean"])
 
@@ -64,6 +82,15 @@ subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=leak", "."])
 subprocess.call(["./test_exact_transient_solution-2"])
 sanitizer_file = open('leak_sanitizer.txt', 'w')
 output = subprocess.Popen(["./test_exact_transient_solution-2"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./charge_curve"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./cyclic_voltammetry"], 
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
+sanitizer_file.write(str(output))
+output = subprocess.Popen(["./discharge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
 sanitizer_file.close()
