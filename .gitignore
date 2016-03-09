@@ -8,5 +8,4 @@ email.txt
 cmake_install.cmake
 *.png
 benchmark_1.txt
-charge_curve_data
-discharge_curve_data
+*_data

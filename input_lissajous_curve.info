@@ -1,0 +1,22 @@
+device {
+  type  ParallelRC ;
+  capacitance          0.0262473 ; [farad]
+  parallel_resistance  41361.5   ; [ohm]
+  series_resistance    100.456   ; [ohm]
+}
+
+lissajous_curve {
+  mode        potentiostatic       ;
+  frequency   1.0e-3               ; [hertz]
+  dc_current  0.2e-3               ; [ampere]
+  dc_voltage  1.1                  ; [volt]
+
+  harmonics   5,7,9                ;
+  amplitudes  5.0e-3,5.0e-3,5.0e-3 ; [ampere or volt]
+  phases      0.0,30.0,45.0        ; [degree]
+
+  cycles           1               ;
+  ignore_cycles    0               ;
+  steps_per_cycle  100             ;
+  initial_voltage  1.1             ; [volt]
+}
