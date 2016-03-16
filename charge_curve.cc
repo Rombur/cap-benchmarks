@@ -16,36 +16,7 @@
 #include <iterator>
 #include <algorithm>
 
-
-
 namespace cap {
-
-void print_headers(std::string const & charge_mode, std::ostream & os)
-{
-    os<<"# charge curve (charge_mode="<<charge_mode<<")\n";
-    os<<boost::format( "# %22s  %22s  %22s  \n")
-        % "time_t_[second]"
-        % "current_I_[ampere]"
-        % "voltage_U_[volt]"
-        ;
-}
-
-
-
-void report(double const time, std::shared_ptr<EnergyStorageDevice const> dev, std::ostream & os)
-{
-    double current;
-    dev->get_current(current);
-    double voltage;
-    dev->get_voltage(voltage);
-    os<<boost::format("  %22.15e  %22.15e  %22.15e  \n")
-        % time
-        % current
-        % voltage
-        ;
-}
-
-
 
 std::function<void(double const, double const, std::shared_ptr<cap::EnergyStorageDevice>)>
 get_charge_evolve_one_time_step(std::string const & charge_mode, std::shared_ptr<boost::property_tree::ptree const> database)
@@ -97,13 +68,10 @@ void charge_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr
     dev->reset_voltage(initial_voltage);
 
     double tick = time;
-    print_headers(charge_mode, os);
-    report(time, dev, os);
     while (time - tick < max_charge_time)
     {
         evolve_one_time_step(time, time_step, dev);
         time += time_step;
-        report(time, dev, os);
         if (end_criterion(time, dev))
             break;
     }
@@ -120,7 +88,6 @@ void charge_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr
         {
             dev->evolve_one_time_step_constant_voltage(time_step, constant_voltage);
             time += time_step;
-            report(time, dev, os);
             dev->get_current(current);
             if ((time - tick >= charge_voltage_finish_max_time)
                 || (current <= charge_voltage_finish_current_limit))
@@ -147,14 +114,9 @@ int main()
         cap::buildEnergyStorageDevice(boost::mpi::communicator(), device_database);
 
     // measure charge curve
-    std::fstream fout;
-    fout.open("charge_curve_data", std::fstream::out);
-
     std::shared_ptr<boost::property_tree::ptree> charge_curve_database =
         std::make_shared<boost::property_tree::ptree>(input_database->get_child("charge_curve"));
-    cap::charge_curve(device, charge_curve_database, fout);
-
-    fout.close();
+    cap::charge_curve(device, charge_curve_database);
 
     return 0;
 }    

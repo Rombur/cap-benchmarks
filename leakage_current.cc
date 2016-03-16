@@ -18,7 +18,7 @@
 
 namespace cap {
 
-void measure_direct_leakage_current(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database, std::ostream & os = std::cout)
+void measure_direct_leakage_current(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database)
 {
     double const dc_voltage          = database->get<double>("dc_voltage"         );
     double const initial_voltage     = database->get<double>("initial_voltage"    );
@@ -37,11 +37,6 @@ void measure_direct_leakage_current(std::shared_ptr<cap::EnergyStorageDevice> de
         ++step;
         dev->get_current(current);
         dev->get_voltage(voltage);
-        os<<boost::format("%20.15e  %20.15e  %20.15e  \n")
-            % time
-            % current
-            % voltage
-            ;
         dev->evolve_one_time_step_constant_voltage(time_step, dc_voltage);
         if (std::abs(current - current_previous_time_step) / std::abs(current) < percent_tolerance)
             break;
@@ -51,7 +46,7 @@ void measure_direct_leakage_current(std::shared_ptr<cap::EnergyStorageDevice> de
 
 
 
-void measure_self_discharge(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database, std::ostream & os = std::cout)
+void measure_self_discharge(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database)
 {
     double const initial_time        = database->get<double>("initial_time"       );
     double const final_time          = database->get<double>("final_time"         );
@@ -65,11 +60,6 @@ void measure_self_discharge(std::shared_ptr<cap::EnergyStorageDevice> dev, std::
         ++step;
         dev->get_current(current);
         dev->get_voltage(voltage);
-        os<<boost::format("%20.15e  %20.15e  %20.15e  \n")
-            % time
-            % current
-            % voltage
-            ;
         dev->evolve_one_time_step_constant_current(time_step, 0.0);
     }
 }
@@ -90,17 +80,13 @@ int main()
         cap::buildEnergyStorageDevice(boost::mpi::communicator(), *device_database);
 
     // apply a DC voltage to and measure the current required to maintain that voltage
-    std::fstream fout;
-    fout.open("direct_leakage_current_data", std::fstream::out);
     std::shared_ptr<boost::property_tree::ptree> direct_leakage_database =
         std::make_shared<boost::property_tree::ptree>(input_database->get_child("direct_leakage"));
-    cap::measure_direct_leakage_current(device, direct_leakage_database, fout);
+    cap::measure_direct_leakage_current(device, direct_leakage_database);
 
     // device is charged.  now measure the change of the open circuit potential
-    fout.close();
-    fout.open("self_discharge_data", std::fstream::out);
     std::shared_ptr<boost::property_tree::ptree> sef_discharge_database =
         std::make_shared<boost::property_tree::ptree>(input_database->get_child("self_discharge"));
-    cap::measure_self_discharge(device, sef_discharge_database, fout);
+    cap::measure_self_discharge(device, sef_discharge_database);
 
 }    

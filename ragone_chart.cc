@@ -166,7 +166,7 @@ get_increase(std::shared_ptr<boost::property_tree::ptree const> database)
 
 
 
-void measure_performance(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database, std::ostream & os = std::cout)
+void measure_performance(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database)
 {
     auto initialize = get_initialize(database);
     auto condition  = get_condition (database);
@@ -193,13 +193,6 @@ void measure_performance(std::shared_ptr<cap::EnergyStorageDevice> dev, std::sha
         steps = dummy_database->get<int   >("steps"         );
         if (steps <= 1)
             break;
-
-        os<<boost::format("  %10.7e  %10.7e  %10.7e  %10d \n")
-            % power
-            % energy
-            % time
-            % steps
-            ;
     }
 }
 
@@ -221,14 +214,9 @@ int main()
         cap::buildEnergyStorageDevice(boost::mpi::communicator(), *device_database);
 
     // measure performance of the system
-    std::fstream fout;
-    fout.open("ragone_chart_data", std::fstream::out);
-
     std::shared_ptr<boost::property_tree::ptree> ragone_chart_database =
         std::make_shared<boost::property_tree::ptree>(input_database->get_child("ragone_chart"));
-    cap::measure_performance(device, ragone_chart_database, fout);
-
-    fout.close();
+    cap::measure_performance(device, ragone_chart_database);
 
     return 0;
 }    

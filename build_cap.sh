@@ -8,6 +8,7 @@ mkdir -p ${PREFIX}/build/Cap && \
 cd ${PREFIX}/build/Cap && \
 cmake \
   -D CMAKE_INSTALL_PREFIX=/opt/cap \
+  -D CMAKE_CXX_COMPILER=mpicxx \
   -D CMAKE_BUILD_TYPE=Release \
   -D BUILD_SHARED_LIBS=ON \
   -D ENABLE_PYTHON=ON \

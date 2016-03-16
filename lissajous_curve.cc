@@ -21,32 +21,6 @@
 
 namespace cap {
 
-void print_headers(std::string const & mode, std::ostream & os)
-{
-    os<<"# lissajous curve (mode="<<mode<<")\n";
-    os<<boost::format( "# %22s  %22s  %22s  \n")
-        % "time t [seconds]"
-        % "current I [amperes]"
-        % "voltage U [volts]"
-        ;
-}
-
-
-
-void report(double const time, std::shared_ptr<EnergyStorageDevice const> dev, std::ostream & os)
-{
-    double current;
-    dev->get_current(current);
-    double voltage;
-    dev->get_voltage(voltage);
-    os<<boost::format("  %22.15e  %22.15e  %22.15e  \n")
-        % time
-        % current
-        % voltage
-        ;
-}
-
-
 
 std::function<void(double const, double const, std::shared_ptr<cap::EnergyStorageDevice>)>
 get_evolve_one_time_step(std::string const & mode, std::shared_ptr<boost::property_tree::ptree const> database)
@@ -85,7 +59,7 @@ get_evolve_one_time_step(std::string const & mode, std::shared_ptr<boost::proper
     }
 }
 
-void measure_lissajous_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database, std::ostream & os = std::cout)
+void measure_lissajous_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database)
 {
     std::string const mode = database->get<std::string>("mode");
     auto evolve_one_time_step = get_evolve_one_time_step(mode, database);
@@ -103,8 +77,6 @@ void measure_lissajous_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std:
     {
           time += time_step;
           evolve_one_time_step(time, time_step, dev);
-          if (n >= ignore_cycles*steps_per_cycle)
-              report(time, dev, os);
     }
 
 }
@@ -114,9 +86,6 @@ void measure_lissajous_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std:
 std::tuple<std::vector<double>, std::vector<double>, std::vector<double>>
 recycle(std::istream & is)
 {
-//    char buffer[256];
-//    is.getline(buffer, 256);
-//    std::cout<<buffer;
     std::vector<double> time;
     std::vector<double> current;
     std::vector<double> voltage;
@@ -128,11 +97,6 @@ recycle(std::istream & is)
             current.emplace_back(std::nan(""));
             voltage.emplace_back(std::nan(""));
             is>>current.back()>>voltage.back();
-            std::cout<<boost::format("  time=%22.15e  current=%22.15e  voltage=%22.15e  \n")
-                % time.back()
-                % current.back()
-                % voltage.back()
-                ;
         } else {
             time.pop_back();
         }
@@ -158,20 +122,15 @@ int main()
         cap::buildEnergyStorageDevice(boost::mpi::communicator(), *device_database);
 
     // measure its impedance
-    std::fstream fout;
-    fout.open("lissajous_curve_data", std::fstream::out);
-
     std::shared_ptr<boost::property_tree::ptree> lissajous_curve_database =
         std::make_shared<boost::property_tree::ptree>(input_database->get_child("lissajous_curve"));
-    cap::measure_lissajous_curve(device, lissajous_curve_database, fout);
+    cap::measure_lissajous_curve(device, lissajous_curve_database);
 
     std::stringstream ss;
-    cap::measure_lissajous_curve(device, lissajous_curve_database, ss);
+    cap::measure_lissajous_curve(device, lissajous_curve_database);
     std::vector<double> current;
     std::vector<double> voltage;
     std::tie(std::ignore, current, voltage) = cap::recycle(ss);
-
-    fout.close();
 
     return 0;
 }    

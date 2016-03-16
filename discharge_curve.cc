@@ -20,32 +20,6 @@
 
 namespace cap {
 
-void print_headers(std::string const & discharge_mode, std::ostream & os)
-{
-    os<<"# discharge curve (discharge_mode="<<discharge_mode<<")\n";
-    os<<boost::format( "# %22s  %22s  %22s  \n")
-        % "time_t_[second]"
-        % "current_I_[ampere]"
-        % "voltage_U_[volt]"
-        ;
-}
-
-
-
-void report(double const time, std::shared_ptr<EnergyStorageDevice const> dev, std::ostream & os)
-{
-    double current;
-    dev->get_current(current);
-    double voltage;
-    dev->get_voltage(voltage);
-    os<<boost::format("  %22.15e  %22.15e  %22.15e  \n")
-        % time
-        % current
-        % voltage
-        ;
-}
-
-
 
 std::function<void(double const, double const, std::shared_ptr<cap::EnergyStorageDevice>)>
 get_discharge_evolve_one_time_step(std::string const & discharge_mode, std::shared_ptr<boost::property_tree::ptree const> database)
@@ -87,7 +61,7 @@ get_discharge_end_criterion(std::string const & discharge_stop_at, std::shared_p
 
 
 
-void discharge_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database, std::ostream & os = std::cout)
+void discharge_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_ptr<boost::property_tree::ptree const> database)
 {
     std::string const discharge_mode    = database->get<std::string>("discharge_mode"   );
     auto evolve_one_time_step = get_discharge_evolve_one_time_step(discharge_mode, database);
@@ -100,13 +74,10 @@ void discharge_curve(std::shared_ptr<cap::EnergyStorageDevice> dev, std::shared_
     dev->reset_voltage(initial_voltage);
 
     double time = 0.0;
-    print_headers(discharge_mode, os);
-    report(time, dev, os);
     while (time < max_discharge_time)
     {
         evolve_one_time_step(time, time_step, dev);
         time += time_step;
-        report(time, dev, os);
         if (end_criterion(time, dev))
             break;
     }
@@ -130,14 +101,9 @@ int main()
         cap::buildEnergyStorageDevice(boost::mpi::communicator(), device_database);
 
     // measure discharge curve
-    std::fstream fout;
-    fout.open("discharge_curve_data", std::fstream::out);
-
     std::shared_ptr<boost::property_tree::ptree> discharge_curve_database =
         std::make_shared<boost::property_tree::ptree>(input_database->get_child("discharge_curve"));
-    cap::discharge_curve(device, discharge_curve_database, fout);
-
-    fout.close();
+    cap::discharge_curve(device, discharge_curve_database);
 
     return 0;
 }    

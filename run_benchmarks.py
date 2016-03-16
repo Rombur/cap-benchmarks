@@ -21,124 +21,130 @@ os.environ['LD_LIBRARY_PATH']="/opt/boost/1.60.0/lib"
 
 # Recompile the Cap and the benchmark using -fsanitize=undefined
 os.chdir(cap_build)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=undefined", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=undefined",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make", "-j8", "install"])
 os.chdir(cap_benchmarks)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=undefined", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=undefined", 
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make"])
-subprocess.call(["./test_exact_transient_solution-2"])
-subprocess.call(["./charge_curve"])
-subprocess.call(["./cyclic_voltammetry"])
-subprocess.call(["./discharge_curve"])
-subprocess.call(["./leakage_current"])
-subprocess.call(["./lissajous_curve"])
-subprocess.call(["./ragone_chart"])
 sanitizer_file = open('undefined_sanitizer.txt', 'w')
 output = subprocess.Popen(["./test_exact_transient_solution-2"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./charge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./cyclic_voltammetry"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./discharge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./leakage_current"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./lissajous_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./ragone_chart"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 sanitizer_file.close()
 subprocess.call(["make","clean"])
 
 # Recompile the Cap and the benchmark using -fsanitize=address
 os.chdir(cap_build)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=address", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=address",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make", "-j8", "install"])
 os.chdir(cap_benchmarks)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=address", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=address",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make"])
-subprocess.call(["./test_exact_transient_solution-2"])
-subprocess.call(["./charge_curve"])
-subprocess.call(["./cyclic_voltammetry"])
-subprocess.call(["./discharge_curve"])
-subprocess.call(["./leakage_current"])
-subprocess.call(["./lissajous_curve"])
-subprocess.call(["./ragone_chart"])
 sanitizer_file = open('address_sanitizer.txt', 'w')
 output = subprocess.Popen(["./test_exact_transient_solution-2"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./charge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./cyclic_voltammetry"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./discharge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./leakage_current"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./lissajous_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./ragone_chart"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 sanitizer_file.close()
 subprocess.call(["make","clean"])
 
 # Recompile the Cap and the benchmark using -fsanitize=leak
 os.chdir(cap_build)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=leak", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=leak",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make", "-j8", "install"])
 os.chdir(cap_benchmarks)
 subprocess.call(["make", "clean"])
 subprocess.call(["make"])
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=leak", "."])
-subprocess.call(["./test_exact_transient_solution-2"])
-subprocess.call(["./charge_curve"])
-subprocess.call(["./cyclic_voltammetry"])
-subprocess.call(["./discharge_curve"])
-subprocess.call(["./leakage_current"])
-subprocess.call(["./lissajous_curve"])
-subprocess.call(["./ragone_chart"])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-fsanitize=leak",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 sanitizer_file = open('leak_sanitizer.txt', 'w')
 output = subprocess.Popen(["./test_exact_transient_solution-2"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./charge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./cyclic_voltammetry"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./discharge_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./leakage_current"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./lissajous_curve"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 output = subprocess.Popen(["./ragone_chart"], 
     stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()[0]
 sanitizer_file.write(str(output))
+sanitizer_file.write("------------------")
 sanitizer_file.close()
 subprocess.call(["make","clean"])
 
@@ -152,15 +158,17 @@ diff_2 = subprocess.Popen(["diff", "undefined_sanitizer.txt",
 
 # Run benchmark
 os.chdir(cap_build)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-O3", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-O3",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make", "-j4", "install"])
 os.chdir(cap_benchmarks)
-subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-O3", "."])
+subprocess.call(["cmake", "-DCMAKE_CXX_FLAGS=-O3",
+"-DCMAKE_CXX_COMPILER=mpicxx", "."])
 subprocess.call(["make", "clean"])
 subprocess.call(["make"])
 start_time = time.time()
-subprocess.call(["./test_exact_transient_solution-2"])
+subprocess.call(["mpirun", "-np", "1", "./test_exact_transient_solution-2"])
 end_time = time.time()
 subprocess.call(["make","clean"])
 benchmark_file = open('benchmark_1.txt', 'a')
